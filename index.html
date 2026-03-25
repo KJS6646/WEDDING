@@ -24,6 +24,7 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
       }
       html {
         scroll-behavior: smooth;
@@ -671,32 +672,86 @@
       }
 
       /* ── GALLERY ── */
-      .g-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 2px;
-        margin-top: 28px;
-      }
-      .g-item {
+      .g-viewer {
+        margin-top: 20px;
         position: relative;
         overflow: hidden;
-        cursor: pointer;
+      }
+      #g-strip {
+        display: flex;
+        transition: transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        will-change: transform;
+      }
+      #g-strip img {
+        flex-shrink: 0;
+        width: 100%;
+        aspect-ratio: 4/5;
+        object-fit: cover;
+        display: block;
+        filter: saturate(88%) contrast(96%) brightness(0.98);
+        user-select: none;
+        -webkit-user-drag: none;
+        pointer-events: none;
+      }
+      .g-thumbs {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2px;
+        margin-top: 2px;
+      }
+      .g-thumb {
         aspect-ratio: 1/1;
+        overflow: hidden;
+        cursor: pointer;
+        opacity: 0.5;
+        transition: opacity 0.2s;
+        position: relative;
       }
-      .g-item:first-child {
-        grid-column: span 2;
-        aspect-ratio: 2/1;
+      .g-thumb.on {
+        opacity: 1;
       }
-      .g-item img {
+      .g-thumb.on::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border: 2px solid rgba(255, 255, 255, 0.85);
+        pointer-events: none;
+      }
+      .g-thumb img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         display: block;
-        filter: saturate(85%) contrast(96%) brightness(0.98);
-        transition: transform 0.55s ease;
+        filter: saturate(85%) contrast(96%);
       }
-      .g-item:hover img {
-        transform: scale(1.05);
+      .g-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        opacity: 0.5;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 2.4rem;
+        line-height: 1;
+        width: 40px;
+        height: 64px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+        transition: color 0.2s;
+      }
+      .g-arrow:active {
+        color: rgba(255, 255, 255, 0.9);
+      }
+      .g-arrow-l {
+        left: 0;
+      }
+      .g-arrow-r {
+        right: 0;
       }
 
       /* ── GUESTBOOK ── */
@@ -856,43 +911,6 @@
         letter-spacing: 0.2em;
         color: var(--text3);
         opacity: 0.45;
-      }
-
-      /* ── LIGHTBOX ── */
-      #lightbox {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(12, 10, 8, 0.95);
-        z-index: 9000;
-        align-items: center;
-        justify-content: center;
-        padding: 24px;
-      }
-      #lightbox.on {
-        display: flex;
-      }
-      #lightbox img {
-        max-width: 92vw;
-        max-height: 88vh;
-        object-fit: contain;
-        box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
-      }
-      #lb-close {
-        position: absolute;
-        top: 18px;
-        right: 22px;
-        color: rgba(255, 255, 255, 0.45);
-        font-size: 1.3rem;
-        cursor: pointer;
-        background: none;
-        border: none;
-        font-family: "Cormorant Garamond", serif;
-        transition: color 0.2s;
-        letter-spacing: 0.08em;
-      }
-      #lb-close:hover {
-        color: white;
       }
 
       /* ── TOAST ── */
@@ -1197,22 +1215,35 @@
     <section>
       <div class="sec alt reveal">
         <span class="eyebrow">Gallery</span>
-        <!-- <h2 class="sec-title">우리의 이야기</h2> -->
+        <h2 class="sec-title">웨딩 갤러리</h2>
         <div class="divider"><span>♡</span></div>
-        <div class="g-grid">
-          <div class="g-item" onclick="openLb(this)">
+        <div class="g-viewer">
+          <div id="g-strip">
+            <img src="./image/5.jpg" alt="" />
+            <img src="./image/1.jpg" alt="" />
+            <img src="./image/2.jpg" alt="" />
+            <img src="./image/3.jpg" alt="" />
+            <img src="./image/4.jpg" alt="" />
+            <img src="./image/5.jpg" alt="" />
             <img src="./image/1.jpg" alt="" />
           </div>
-          <div class="g-item" onclick="openLb(this)">
+          <button class="g-arrow g-arrow-l" onclick="goPrev()">&#8249;</button>
+          <button class="g-arrow g-arrow-r" onclick="goNext()">&#8250;</button>
+        </div>
+        <div class="g-thumbs">
+          <div class="g-thumb on" onclick="selectPhoto(0)">
+            <img src="./image/1.jpg" alt="" />
+          </div>
+          <div class="g-thumb" onclick="selectPhoto(1)">
             <img src="./image/2.jpg" alt="" />
           </div>
-          <div class="g-item" onclick="openLb(this)">
+          <div class="g-thumb" onclick="selectPhoto(2)">
             <img src="./image/3.jpg" alt="" />
           </div>
-          <div class="g-item" onclick="openLb(this)">
+          <div class="g-thumb" onclick="selectPhoto(3)">
             <img src="./image/4.jpg" alt="" />
           </div>
-          <div class="g-item" onclick="openLb(this)">
+          <div class="g-thumb" onclick="selectPhoto(4)">
             <img src="./image/5.jpg" alt="" />
           </div>
         </div>
@@ -1258,10 +1289,6 @@
       <small>Made with love</small>
     </footer>
 
-    <div id="lightbox">
-      <button id="lb-close" onclick="closeLb()">close ✕</button>
-      <img id="lb-img" src="" alt="" />
-    </div>
     <div id="toast"></div>
 
     <script>
@@ -1398,21 +1425,59 @@
         }, 2400);
       }
 
-      /* ── Lightbox ── */
-      function openLb(el) {
-        document.getElementById("lb-img").src = el.querySelector("img").src;
-        document.getElementById("lightbox").classList.add("on");
-        document.body.style.overflow = "hidden";
+      /* ── Gallery Viewer (infinite loop) ── */
+      // Strip layout: [clone-5][1][2][3][4][5][clone-1]
+      // Strip positions:  0     1  2  3  4  5     6
+      var G_N = 5;
+      var gPos = 1;
+      var gStartX = 0;
+      var gDragging = false;
+
+      function gLogIdx(pos) {
+        return ((pos - 1) % G_N + G_N) % G_N;
       }
-      function closeLb() {
-        document.getElementById("lightbox").classList.remove("on");
-        document.body.style.overflow = "";
-      }
-      document
-        .getElementById("lightbox")
-        .addEventListener("click", function (e) {
-          if (e.target === this) closeLb();
+      function gRender(pos, animate) {
+        var strip = document.getElementById("g-strip");
+        strip.style.transition = animate ? "" : "none";
+        strip.style.transform = "translateX(" + (-pos * 100) + "%)";
+        var li = gLogIdx(pos);
+        document.querySelectorAll(".g-thumb").forEach(function (el, i) {
+          el.classList.toggle("on", i === li);
         });
+      }
+      function selectPhoto(li) { gPos = li + 1; gRender(gPos, true); }
+      function goPrev() { gPos--; gRender(gPos, true); }
+      function goNext() { gPos++; gRender(gPos, true); }
+
+      (function () {
+        var strip = document.getElementById("g-strip");
+        var viewer = document.querySelector(".g-viewer");
+
+        gRender(gPos, false);
+
+        strip.addEventListener("transitionend", function () {
+          if (gPos === 0) { gPos = G_N; gRender(gPos, false); }
+          else if (gPos === G_N + 1) { gPos = 1; gRender(gPos, false); }
+        });
+
+        viewer.addEventListener("touchstart", function (e) {
+          gStartX = e.touches[0].clientX;
+          gDragging = true;
+          strip.style.transition = "none";
+        }, { passive: true });
+        viewer.addEventListener("touchmove", function (e) {
+          if (!gDragging) return;
+          var dx = e.touches[0].clientX - gStartX;
+          strip.style.transform = "translateX(calc(" + (-gPos * 100) + "% + " + dx + "px))";
+        }, { passive: true });
+        viewer.addEventListener("touchend", function (e) {
+          if (!gDragging) return;
+          gDragging = false;
+          var dx = e.changedTouches[0].clientX - gStartX;
+          if (Math.abs(dx) > 40) gPos += dx < 0 ? 1 : -1;
+          gRender(gPos, true);
+        }, { passive: true });
+      })();
 
       /* ── Guestbook (localStorage) ── */
       var KEY = "wedding_junseok_hyeonkyeong_v5";
